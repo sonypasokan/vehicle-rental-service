@@ -21,9 +21,9 @@ public class Booking {
     @ManyToOne(fetch = FetchType.LAZY)
     private Vehicle vehicle;
 
-    @JoinColumn(name = "station_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Station station;
+//    @JoinColumn(name = "station_id", referencedColumnName = "id")
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private Station station;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime fromTime;
