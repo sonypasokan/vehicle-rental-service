@@ -11,6 +11,7 @@ import com.rental.vehiclerental.exception.UserNotExistException;
 import com.rental.vehiclerental.exception.VehicleNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class BookingService implements Bookable {
     private BookingDAO bookingDAO;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Booking book(int userId, int vehicleId) throws UserNotExistException, VehicleNotExistException {
         User user = userDAO.getUser(userId);
         // Check if the user exists
@@ -43,6 +45,7 @@ public class BookingService implements Bookable {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<Booking> view(int userId) throws UserNotExistException {
         User user = userDAO.getUser(userId);
         // Check if the user exists
@@ -52,6 +55,7 @@ public class BookingService implements Bookable {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Booking returnVehicle(int bookingId) throws BookingNotExistException {
         Booking booking = bookingDAO.getBookingById(bookingId);
         if (booking == null)

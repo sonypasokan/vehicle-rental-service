@@ -31,7 +31,6 @@ public class BookingDAOImpl implements BookingDAO{
     @Override
     public List<Booking> getBookingByUser(int userId) {
         Session currentSession = entityManager.unwrap(Session.class);
-        List<Booking> bookings;
 
         TypedQuery<Booking> query = currentSession.createQuery(
                 "select a from Booking a where a.user.id=:userId",
@@ -44,7 +43,6 @@ public class BookingDAOImpl implements BookingDAO{
     @Override
     public Booking getBookingById(int bookingId) {
         Session currentSession = entityManager.unwrap(Session.class);
-        Booking booking;
 
         TypedQuery<Booking> query = currentSession.createQuery(
                 "select a from Booking a where a.id=:bookingId",
