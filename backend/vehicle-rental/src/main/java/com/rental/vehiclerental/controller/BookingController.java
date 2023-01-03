@@ -35,16 +35,17 @@ public class BookingController {
         try {
             if(!payload.containsKey("userId"))
                 throw new MandatoryFieldMissingException("userId");
-            if(!payload.containsKey("vehicleId"))
-                throw new MandatoryFieldMissingException("vehicleId");
+            if(!payload.containsKey("regId"))
+                throw new MandatoryFieldMissingException("regId");
             int userId = (int) payload.get("userId");
-            int vehicleId = (int) payload.get("vehicleId");
-            Booking booking = bookingService.book(userId, vehicleId);
+            String regId = payload.get("regId").toString();
+            Booking booking = bookingService.book(userId, regId);
             jsonObject.putPOJO("values", booking);
             jsonObject.put("success", true);
             jsonObject.put("message", "Successfully booked.");
             status = HttpStatus.OK;
         } catch (Exception e) {
+            e.printStackTrace();
             jsonObject.put("success", false);
             jsonObject.put("message", "Unable to process your request - " + e.getMessage());
             status = HttpStatus.BAD_REQUEST;

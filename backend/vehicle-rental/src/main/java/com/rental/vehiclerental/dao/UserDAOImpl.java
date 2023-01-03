@@ -20,12 +20,16 @@ public class UserDAOImpl implements UserDAO{
     public User getUser(int userId) {
         Session currentSession = entityManager.unwrap(Session.class);
 
-        TypedQuery<User> query = currentSession.createQuery(
-                "select a from User a where a.id=:userId",
-                User.class
-        );
-        query.setParameter("userId", userId);
-        return query.getSingleResult();
+        try {
+            TypedQuery<User> query = currentSession.createQuery(
+                    "select a from User a where a.id=:userId",
+                    User.class
+            );
+            query.setParameter("userId", userId);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override

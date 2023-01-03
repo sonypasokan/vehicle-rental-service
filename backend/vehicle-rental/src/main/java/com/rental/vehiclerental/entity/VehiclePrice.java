@@ -17,9 +17,13 @@ public class VehiclePrice {
     @ManyToOne(fetch = FetchType.LAZY)
     private Vehicle vehicle;
 
-    private float pricePerHour;
+    private double pricePerHour;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedTime;
+
+    @JoinColumn(name = "updated_by_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User updatedBy;
 
 }

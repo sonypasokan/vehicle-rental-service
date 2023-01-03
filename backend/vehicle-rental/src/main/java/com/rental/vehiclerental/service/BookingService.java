@@ -29,18 +29,18 @@ public class BookingService implements Bookable {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Booking book(int userId, int vehicleId) throws UserNotExistException, VehicleNotExistException {
+    public Booking book(int userId, String regId) throws UserNotExistException, VehicleNotExistException {
         User user = userDAO.getUser(userId);
         // Check if the user exists
         if (user == null)
             throw new UserNotExistException("User with id " + userId + " does not exist");
-        Vehicle vehicle = vehicleDAO.getVehicle(vehicleId);
+        Vehicle vehicle = vehicleDAO.getVehicleByRegId(regId);
         // Check if the vehicle exists
         if (vehicle == null)
-            throw new VehicleNotExistException("Vehicle with id " + vehicleId + " does not exist");
+            throw new VehicleNotExistException("Vehicle with id " + regId + " does not exist");
         // Check if the vehicle is available
         if (!vehicle.isAvailable())
-            throw new VehicleNotExistException("Vehicle with id " + vehicleId + " is not available for booking now");
+            throw new VehicleNotExistException("Vehicle with id " + regId + " is not available for booking now");
         return bookingDAO.create(user, vehicle);
     }
 

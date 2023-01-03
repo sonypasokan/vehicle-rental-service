@@ -7,4 +7,6 @@ import java.net.URL;
 
 public interface StationDAO {
     Station add(User user, String stationName, URL location);
+
+    Station getStation(int stationId);
 }

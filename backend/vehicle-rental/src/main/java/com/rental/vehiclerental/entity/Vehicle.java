@@ -2,10 +2,7 @@ package com.rental.vehiclerental.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -20,5 +17,9 @@ public class Vehicle {
     private String model;
 
     private boolean isAvailable;
+
+    @JoinColumn(name = "creator_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User creator;
 
 }

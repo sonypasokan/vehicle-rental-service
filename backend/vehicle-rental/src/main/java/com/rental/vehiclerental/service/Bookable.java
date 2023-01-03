@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface Bookable {
 
-    Booking book(int userId, int vehicleId) throws UserNotExistException, VehicleNotExistException;
+    Booking book(int userId, String regId) throws UserNotExistException, VehicleNotExistException;
 
     List<Booking> view(int userId) throws UserNotExistException;
 
