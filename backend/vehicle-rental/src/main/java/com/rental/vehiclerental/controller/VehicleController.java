@@ -41,18 +41,42 @@ public class VehicleController {
             if(!payload.containsKey("type")) throw new MandatoryFieldMissingException("type");
             if(!payload.containsKey("regId")) throw new MandatoryFieldMissingException("regId");
             if(!payload.containsKey("model")) throw new MandatoryFieldMissingException("model");
-            if(!payload.containsKey("stationId")) throw new MandatoryFieldMissingException("stationId");
             if(!payload.containsKey("price")) throw new MandatoryFieldMissingException("price");
             int userId = (int) payload.get("userId");
-            int stationId = (int) payload.get("stationId");
             String type = payload.get("type").toString();
             String regId = payload.get("regId").toString();
             String model = payload.get("model").toString();
             double price = (double) payload.getOrDefault("price", 0);
-            Vehicle vehicle = vehicleManager.add(userId, regId, stationId, type, model, price);
+            Vehicle vehicle = vehicleManager.add(userId, regId, type, model, price);
             jsonObject.putPOJO("values", vehicle);
             jsonObject.put("success", true);
             jsonObject.put("message", "New vehicle added.");
+            status = HttpStatus.OK;
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("success", false);
+            jsonObject.put("message", "Unable to process your request - " + e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(jsonObject, status);
+    }
+
+    @ApiOperation(value = "Move Vehicle", response = ResponseEntity.class)
+    @PostMapping("/move")
+    public ResponseEntity<Object> move(@RequestBody Map<String, Object> payload) {
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        HttpStatus status;
+
+        try {
+            if(!payload.containsKey("userId")) throw new MandatoryFieldMissingException("userId");
+            if(!payload.containsKey("regId")) throw new MandatoryFieldMissingException("regId");
+            if(!payload.containsKey("stationId")) throw new MandatoryFieldMissingException("stationId");
+            int userId = (int) payload.get("userId");
+            int stationId = (int) payload.get("stationId");
+            String regId = payload.get("regId").toString();
+            vehicleManager.move(userId, regId, stationId);
+            jsonObject.put("success", true);
+            jsonObject.put("message", "Vehicle moved successfully");
             status = HttpStatus.OK;
         } catch (Exception e) {
             e.printStackTrace();

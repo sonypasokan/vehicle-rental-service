@@ -9,6 +9,7 @@ import com.rental.vehiclerental.exception.VehicleNotExistException;
 
 public interface VehicleManager {
 
-    Vehicle add(int userId, String regId, int stationId, String type, String model, double price) throws UserNotExistException, UserNotAdminException, VehicleNotExistException, StationNotExistException;
+    Vehicle add(int userId, String regId, String type, String model, double price) throws UserNotExistException, UserNotAdminException, VehicleNotExistException, StationNotExistException;
 
+    void move(int userId, String regId, int stationId) throws UserNotExistException, UserNotAdminException, VehicleNotExistException, StationNotExistException;
 }

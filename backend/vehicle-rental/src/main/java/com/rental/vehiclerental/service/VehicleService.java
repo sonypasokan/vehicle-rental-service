@@ -32,18 +32,27 @@ public class VehicleService implements VehicleManager {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Vehicle add(int userId, String regId, int stationId, String type, String model, double price)
+    public Vehicle add(int userId, String regId, String type, String model, double price)
             throws UserNotExistException, UserNotAdminException, VehicleNotExistException, StationNotExistException {
         User user = accessEnabler.verifyAdminUser(userId);
         Vehicle vehicle = vehicleDAO.getVehicleByRegId(regId);
         if (vehicle != null)
             throw new VehicleNotExistException("Vehicle already exists with this regId " + regId);
+        vehicle = vehicleDAO.add(user, regId, type, model);
+        vehicleDAO.updatePrice(vehicle, price, user);
+        return vehicle;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void move(int userId, String regId, int stationId) throws UserNotExistException, UserNotAdminException, VehicleNotExistException, StationNotExistException {
+        User user = accessEnabler.verifyAdminUser(userId);
+        Vehicle vehicle = vehicleDAO.getVehicleByRegId(regId);
+        if (vehicle == null)
+            throw new VehicleNotExistException("Vehicle not found with id " + regId);
         Station station = stationDAO.getStation(stationId);
         if (station == null)
             throw new StationNotExistException("Station " + stationId + " does not exist");
-        vehicle = vehicleDAO.add(user, regId, type, model);
-        vehicleDAO.updatePrice(vehicle, price, user);
         vehicleDAO.updateStation(vehicle, station, user);
-        return vehicle;
     }
 }
