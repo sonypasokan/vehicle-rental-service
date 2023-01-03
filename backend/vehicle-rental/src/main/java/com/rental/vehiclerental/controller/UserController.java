@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rental.vehiclerental.entity.User;
 import com.rental.vehiclerental.exception.MandatoryFieldMissingException;
-import com.rental.vehiclerental.service.AccountConnector;
+import com.rental.vehiclerental.service.AccessEnabler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class UserController {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private AccountConnector accountService;
+    private AccessEnabler accessEnabler;
 
     @ApiOperation(value = "Send OTP", response = ResponseEntity.class)
     @PostMapping("/send-otp")
@@ -39,13 +39,13 @@ public class UserController {
         try {
             if (!payload.containsKey("phone")) throw new MandatoryFieldMissingException("phone");
             String phone = payload.get("phone").toString();
-            accountService.sendOtp(phone);
+            accessEnabler.sendOtp(phone);
             jsonObject.put("success", true);
             jsonObject.put("message", "Successfully sent the OTP.");
             status = HttpStatus.OK;
         } catch (Exception e) {
             jsonObject.put("success", false);
-            jsonObject.put("message", "Unable to process your request." + e.getMessage());
+            jsonObject.put("message", "Unable to process your request - " + e.getMessage());
             status = HttpStatus.BAD_REQUEST;
         }
         return new ResponseEntity<>(jsonObject, status);
@@ -62,7 +62,7 @@ public class UserController {
             if (!payload.containsKey("otp")) throw new MandatoryFieldMissingException("otp");
             String phone = payload.get("phone").toString();
             String otp = payload.get("otp").toString();
-            Pair<User, Boolean> userStatus = accountService.validateOtp(phone, otp);
+            Pair<User, Boolean> userStatus = accessEnabler.validateOtp(phone, otp);
             Map<String, Object> values = new HashMap<>();
             values.put("user", userStatus.getFirst());
             values.put("exists", userStatus.getSecond());
@@ -92,7 +92,7 @@ public class UserController {
             int userId = (int) payload.get("userId");
             String name = payload.get("name").toString();
             String email = payload.get("email").toString();
-            User user = accountService.createProfile(userId, name, email);
+            User user = accessEnabler.createProfile(userId, name, email);
             jsonObject.put("success", true);
             jsonObject.putPOJO("values", user);
             jsonObject.put("message", "Successfully created the profile.");
@@ -114,7 +114,7 @@ public class UserController {
         try {
             if (!payload.containsKey("userId")) throw new MandatoryFieldMissingException("userId");
             int userId = (int) payload.get("userId");
-            User user = accountService.setAdmin(userId);
+            User user = accessEnabler.setAdmin(userId);
             jsonObject.put("success", true);
             jsonObject.putPOJO("values", user);
             jsonObject.put("message", "Successfully added " + userId + " as admin.");

@@ -3,10 +3,7 @@ package com.rental.vehiclerental.entity;
 import lombok.Data;
 import org.hibernate.annotations.Generated;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.net.URL;
 
 import java.time.LocalDateTime;
@@ -24,5 +21,9 @@ public class Station {
     private URL location;
 
     private LocalDateTime creationTime;
+
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User creator;
 
 }

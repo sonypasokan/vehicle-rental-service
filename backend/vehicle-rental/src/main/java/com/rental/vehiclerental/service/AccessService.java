@@ -5,6 +5,7 @@ import com.rental.vehiclerental.dao.UserDAO;
 import com.rental.vehiclerental.entity.PhoneOTP;
 import com.rental.vehiclerental.entity.User;
 import com.rental.vehiclerental.exception.IncorrectOTPException;
+import com.rental.vehiclerental.exception.UserNotAdminException;
 import com.rental.vehiclerental.exception.UserNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.SplittableRandom;
 
 @Service
-public class AccountService implements AccountConnector {
+public class AccessService implements AccessEnabler {
 
     @Autowired
     private PhoneDAO phoneDAO;
@@ -81,6 +82,22 @@ public class AccountService implements AccountConnector {
         if (user == null)
             throw new UserNotExistException("User with id " + userId + " doesn't exist");
         user = userDAO.setAdmin(user);
+        return user;
+    }
+
+    @Override
+    public User verifyUser(int userId) throws UserNotExistException {
+        User user = userDAO.getUser(userId);
+        if (user == null)
+            throw new UserNotExistException("User with id " + userId + " doesn't exist");
+        return user;
+    }
+
+    @Override
+    public User verifyAdminUser(int userId) throws UserNotExistException, UserNotAdminException {
+        User user = verifyUser(userId);
+        if (!user.isAdmin())
+            throw new UserNotAdminException("User does not have admin privilege");
         return user;
     }
 }

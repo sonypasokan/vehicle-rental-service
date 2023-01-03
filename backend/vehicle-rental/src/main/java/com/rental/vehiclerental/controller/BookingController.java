@@ -46,7 +46,7 @@ public class BookingController {
             status = HttpStatus.OK;
         } catch (Exception e) {
             jsonObject.put("success", false);
-            jsonObject.put("message", "Unable to process your request." + e.getMessage());
+            jsonObject.put("message", "Unable to process your request - " + e.getMessage());
             status = HttpStatus.BAD_REQUEST;
         }
         return new ResponseEntity<>(jsonObject, status);
@@ -66,7 +66,7 @@ public class BookingController {
             status = HttpStatus.OK;
         } catch (Exception e) {
             jsonObject.put("success", false);
-            jsonObject.put("message", "Unable to process your request." + e.getMessage());
+            jsonObject.put("message", "Unable to process your request - " + e.getMessage());
             status = HttpStatus.BAD_REQUEST;
         }
         return new ResponseEntity<>(jsonObject, status);
@@ -89,7 +89,7 @@ public class BookingController {
             status = HttpStatus.OK;
         } catch (Exception e) {
             jsonObject.put("success", false);
-            jsonObject.put("message", "Unable to process your request." + e.getMessage());
+            jsonObject.put("message", "Unable to process your request - " + e.getMessage());
             status = HttpStatus.BAD_REQUEST;
         }
         return new ResponseEntity<>(jsonObject, status);
