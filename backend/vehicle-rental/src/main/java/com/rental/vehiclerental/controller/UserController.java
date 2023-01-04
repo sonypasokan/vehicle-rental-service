@@ -44,6 +44,7 @@ public class UserController {
             jsonObject.put("message", "Successfully sent the OTP.");
             status = HttpStatus.OK;
         } catch (Exception e) {
+            e.printStackTrace();
             jsonObject.put("success", false);
             jsonObject.put("message", "Unable to process your request - " + e.getMessage());
             status = HttpStatus.BAD_REQUEST;

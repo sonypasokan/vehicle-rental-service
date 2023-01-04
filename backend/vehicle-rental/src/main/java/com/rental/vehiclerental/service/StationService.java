@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 @Service
 public class StationService implements StationManager {
@@ -34,5 +35,11 @@ public class StationService implements StationManager {
         if (!location.equals(""))
             url = new URL(location);
         return stationDAO.add(user, stationName, url);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<Station> getAllStations() {
+        return stationDAO.getAllStations();
     }
 }

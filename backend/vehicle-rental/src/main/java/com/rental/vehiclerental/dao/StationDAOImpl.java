@@ -12,6 +12,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public class StationDAOImpl implements StationDAO{
@@ -46,5 +47,15 @@ public class StationDAOImpl implements StationDAO{
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    @Override
+    public List<Station> getAllStations() {
+        Session currentSession = entityManager.unwrap(Session.class);
+        TypedQuery<Station> query = currentSession.createQuery(
+                "select a from Station a",
+                Station.class
+        );
+        return query.getResultList();
     }
 }

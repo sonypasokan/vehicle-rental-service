@@ -10,12 +10,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -45,6 +43,27 @@ public class StationController {
             jsonObject.putPOJO("values", station);
             jsonObject.put("success", true);
             jsonObject.put("message", "New station added.");
+            status = HttpStatus.OK;
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("success", false);
+            jsonObject.put("message", "Unable to process your request - " + e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(jsonObject, status);
+    }
+
+    @ApiOperation(value = "View All Stations", response = ResponseEntity.class)
+    @GetMapping("/view")
+    public ResponseEntity<Object> view() {
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        HttpStatus status;
+
+        try {
+            List<Station> stationList = stationManager.getAllStations();
+            jsonObject.putPOJO("values", stationList);
+            jsonObject.put("success", true);
+            jsonObject.put("message", "Successfully listed all stations");
             status = HttpStatus.OK;
         } catch (Exception e) {
             e.printStackTrace();

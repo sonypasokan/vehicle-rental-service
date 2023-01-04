@@ -1,16 +1,14 @@
 package com.rental.vehiclerental.service;
 
 import com.rental.vehiclerental.entity.User;
-import com.rental.vehiclerental.exception.IncorrectOTPException;
-import com.rental.vehiclerental.exception.UserNotAdminException;
-import com.rental.vehiclerental.exception.UserNotExistException;
+import com.rental.vehiclerental.exception.*;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface AccessEnabler {
 
-    void sendOtp(String phone);
+    void sendOtp(String phone) throws MandatoryFieldMissingException, EnvironmentVariableMissingException;
 
     Pair<User, Boolean> validateOtp(String phone, String otp) throws IncorrectOTPException;
 

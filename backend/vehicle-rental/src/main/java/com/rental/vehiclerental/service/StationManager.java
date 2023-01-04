@@ -5,8 +5,12 @@ import com.rental.vehiclerental.exception.UserNotAdminException;
 import com.rental.vehiclerental.exception.UserNotExistException;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.List;
 
 public interface StationManager {
+
     Station add(int userId, String stationName, String location) throws UserNotExistException, UserNotAdminException, MalformedURLException;
+
+    List<Station> getAllStations();
+
 }

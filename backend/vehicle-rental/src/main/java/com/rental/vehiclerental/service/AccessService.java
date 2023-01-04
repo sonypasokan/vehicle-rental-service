@@ -1,12 +1,11 @@
 package com.rental.vehiclerental.service;
 
+import com.rental.vehiclerental.constants.OTPStrings;
 import com.rental.vehiclerental.dao.PhoneDAO;
 import com.rental.vehiclerental.dao.UserDAO;
 import com.rental.vehiclerental.entity.PhoneOTP;
 import com.rental.vehiclerental.entity.User;
-import com.rental.vehiclerental.exception.IncorrectOTPException;
-import com.rental.vehiclerental.exception.UserNotAdminException;
-import com.rental.vehiclerental.exception.UserNotExistException;
+import com.rental.vehiclerental.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -26,18 +25,20 @@ public class AccessService implements AccessEnabler {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void sendOtp(String phone) {
+    public void sendOtp(String phone) throws EnvironmentVariableMissingException {
         // Generate OTP
-        String otp = generateOTP(4);
+        String otp = generateOTP(OTPStrings.LENGTH_OF_OTP);
         System.out.println("OTP=" + otp);
         // send OTP
         sendOtp(phone, otp);
         // store OTP and phone number
-        phoneDAO.save(phone, otp, 15);
+        phoneDAO.save(phone, otp, OTPStrings.TTL_IN_MINUTES);
     }
 
-    private void sendOtp(String phone, String otp) {
-        // TODO: Send OTP
+    private void sendOtp(String phone, String otp) throws EnvironmentVariableMissingException {
+        String message = String.format(OTPStrings.OTP_MESSAGE, otp);
+        String sid = new SMSService().send(message, phone);
+        System.out.println("Message id: " + sid);
     }
 
     private String generateOTP(int lengthOfOTP) {
