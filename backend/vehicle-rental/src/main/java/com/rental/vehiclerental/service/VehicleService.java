@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 public class VehicleService implements VehicleManager {
@@ -53,6 +55,15 @@ public class VehicleService implements VehicleManager {
         Station station = stationDAO.getStation(stationId);
         if (station == null)
             throw new StationNotExistException("Station " + stationId + " does not exist");
-        vehicleDAO.updateStation(vehicle, station, user);
+        vehicleDAO.updateStationHistory(vehicle, station, user);
+        vehicleDAO.updateStation(vehicle, station);
+    }
+
+    @Override
+    public List<Vehicle> viewByStationId(int stationId) throws StationNotExistException {
+        Station station = stationDAO.getStation(stationId);
+        if (station == null)
+            throw new StationNotExistException("Station " + stationId + " does not exist");
+        return vehicleDAO.getAvailableVehiclesByStation(station);
     }
 }

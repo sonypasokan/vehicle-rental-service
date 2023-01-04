@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public class VehicleDAOImpl implements VehicleDAO{
@@ -40,6 +41,8 @@ public class VehicleDAOImpl implements VehicleDAO{
         vehicle.setType(type);
         vehicle.setModel(model);
         vehicle.setAvailable(true);
+        vehicle.setCreator(user);
+        vehicle.setCreatedTime(LocalDateTime.now());
         entityManager.persist(vehicle);
         return vehicle;
     }
@@ -55,13 +58,37 @@ public class VehicleDAOImpl implements VehicleDAO{
     }
 
     @Override
-    public void updateStation(Vehicle vehicle, Station station, User user) {
-        VehicleStation vehicleStation = new VehicleStation();
-        vehicleStation.setVehicle(vehicle);
-        vehicleStation.setStation(station);
-        vehicleStation.setUpdatedTime(LocalDateTime.now());
-        vehicleStation.setUpdatedBy(user);
-        entityManager.persist(vehicleStation);
+    public void updateStationHistory(Vehicle vehicle, Station station, User user) {
+        VehicleStationHistory vehicleStationHistory = new VehicleStationHistory();
+        vehicleStationHistory.setVehicle(vehicle);
+        vehicleStationHistory.setStation(station);
+        vehicleStationHistory.setUpdatedTime(LocalDateTime.now());
+        vehicleStationHistory.setUpdatedBy(user);
+        entityManager.persist(vehicleStationHistory);
+    }
+
+    @Override
+    public List<Vehicle> getAvailableVehiclesByStation(Station station) {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        TypedQuery<Vehicle> query = currentSession.createQuery(
+                "select a.vehicle from VehicleStation a where a.station=:station ",
+                Vehicle.class
+        );
+        query.setParameter("station", station);
+        return query.getResultList();
+    }
+
+    @Override
+    public void updateStation(Vehicle vehicle, Station station) {
+        vehicle.setStation(station);
+        entityManager.persist(vehicle);
+    }
+
+    @Override
+    public void makeAvailable(Vehicle vehicle, boolean available) {
+        vehicle.setAvailable(available);
+        entityManager.persist(vehicle);
     }
 
 }

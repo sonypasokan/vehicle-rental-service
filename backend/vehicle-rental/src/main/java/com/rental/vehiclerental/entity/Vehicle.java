@@ -3,6 +3,7 @@ package com.rental.vehiclerental.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -22,4 +23,9 @@ public class Vehicle {
     @ManyToOne(fetch = FetchType.LAZY)
     private User creator;
 
+    private LocalDateTime createdTime;
+
+    @JoinColumn(name = "station_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Station station;
 }

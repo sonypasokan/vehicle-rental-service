@@ -1,6 +1,7 @@
 package com.rental.vehiclerental.dao;
 
 import com.rental.vehiclerental.entity.Booking;
+import com.rental.vehiclerental.entity.Station;
 import com.rental.vehiclerental.entity.User;
 import com.rental.vehiclerental.entity.Vehicle;
 import org.hibernate.Session;
@@ -24,6 +25,7 @@ public class BookingDAOImpl implements BookingDAO{
         booking.setUser(user);
         booking.setVehicle(vehicle);
         booking.setFromTime(LocalDateTime.now());
+        booking.setFromStation(vehicle.getStation());
         entityManager.persist(booking);
         return booking;
     }
@@ -53,11 +55,10 @@ public class BookingDAOImpl implements BookingDAO{
     }
 
     @Override
-    public Booking returnVehicle(Booking booking) {
-        Session currentSession = entityManager.unwrap(Session.class);
+    public Booking returnVehicle(Booking booking, Station station) {
         booking.setToTime(LocalDateTime.now());
+        booking.setToStation(station);
         booking.setReturned(true);
-        // TODO: Think any other table modification required while returning
         entityManager.persist(booking);
         return booking;
     }

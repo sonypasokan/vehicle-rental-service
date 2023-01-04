@@ -2,6 +2,7 @@ package com.rental.vehiclerental.service;
 
 import com.rental.vehiclerental.entity.Booking;
 import com.rental.vehiclerental.exception.BookingNotExistException;
+import com.rental.vehiclerental.exception.StationNotExistException;
 import com.rental.vehiclerental.exception.UserNotExistException;
 import com.rental.vehiclerental.exception.VehicleNotExistException;
 
@@ -13,5 +14,5 @@ public interface Bookable {
 
     List<Booking> view(int userId) throws UserNotExistException;
 
-    Booking returnVehicle(int bookingId) throws BookingNotExistException;
+    Booking returnVehicle(int bookingId, int stationId) throws BookingNotExistException, StationNotExistException;
 }

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-public class VehicleStation {
+public class VehicleStationHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

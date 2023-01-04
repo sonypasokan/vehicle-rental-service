@@ -12,11 +12,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -77,6 +75,27 @@ public class VehicleController {
             vehicleManager.move(userId, regId, stationId);
             jsonObject.put("success", true);
             jsonObject.put("message", "Vehicle moved successfully");
+            status = HttpStatus.OK;
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("success", false);
+            jsonObject.put("message", "Unable to process your request - " + e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(jsonObject, status);
+    }
+
+    @ApiOperation(value = "Get vehicles at station", response = ResponseEntity.class)
+    @GetMapping("/view/{stationId}")
+    public ResponseEntity<Object> viewByStation(@PathVariable int stationId) {
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        HttpStatus status;
+
+        try {
+            List<Vehicle> vehicleList = vehicleManager.viewByStationId(stationId);
+            jsonObject.putPOJO("values", vehicleList);
+            jsonObject.put("success", true);
+            jsonObject.put("message", "Vehicle listed successfully");
             status = HttpStatus.OK;
         } catch (Exception e) {
             e.printStackTrace();

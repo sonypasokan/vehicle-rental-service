@@ -6,10 +6,14 @@ import com.rental.vehiclerental.exception.UserNotAdminException;
 import com.rental.vehiclerental.exception.UserNotExistException;
 import com.rental.vehiclerental.exception.VehicleNotExistException;
 
+import java.util.List;
+
 
 public interface VehicleManager {
 
     Vehicle add(int userId, String regId, String type, String model, double price) throws UserNotExistException, UserNotAdminException, VehicleNotExistException, StationNotExistException;
 
     void move(int userId, String regId, int stationId) throws UserNotExistException, UserNotAdminException, VehicleNotExistException, StationNotExistException;
+
+    List<Vehicle> viewByStationId(int stationId) throws StationNotExistException;
 }

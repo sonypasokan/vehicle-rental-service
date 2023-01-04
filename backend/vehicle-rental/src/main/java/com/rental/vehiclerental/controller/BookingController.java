@@ -33,10 +33,8 @@ public class BookingController {
         HttpStatus status;
 
         try {
-            if(!payload.containsKey("userId"))
-                throw new MandatoryFieldMissingException("userId");
-            if(!payload.containsKey("regId"))
-                throw new MandatoryFieldMissingException("regId");
+            if(!payload.containsKey("userId")) throw new MandatoryFieldMissingException("userId");
+            if(!payload.containsKey("regId")) throw new MandatoryFieldMissingException("regId");
             int userId = (int) payload.get("userId");
             String regId = payload.get("regId").toString();
             Booking booking = bookingService.book(userId, regId);
@@ -80,10 +78,11 @@ public class BookingController {
         HttpStatus status;
 
         try {
-            if(!payload.containsKey("bookingId"))
-                throw new MandatoryFieldMissingException("bookingId");
+            if(!payload.containsKey("bookingId")) throw new MandatoryFieldMissingException("bookingId");
+            if(!payload.containsKey("stationId")) throw new MandatoryFieldMissingException("stationId");
             int bookingId = (int) payload.get("bookingId");
-            Booking booking = bookingService.returnVehicle(bookingId);
+            int stationId = (int) payload.get("stationId");
+            Booking booking = bookingService.returnVehicle(bookingId, stationId);
             jsonObject.putPOJO("values", booking);
             jsonObject.put("success", true);
             jsonObject.put("message", "Successfully fetched bookings.");
