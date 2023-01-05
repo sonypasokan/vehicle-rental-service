@@ -16,9 +16,12 @@ public interface VehicleDAO {
 
     void updateStationHistory(Vehicle vehicle, Station station, User user);
 
-    List<Vehicle> getAvailableVehiclesByStation(Station station);
+    List<Vehicle> getVehiclesByStationAndAvailability(Station station, boolean availableOnly);
 
     void updateStation(Vehicle vehicle, Station station);
 
     void makeAvailable(Vehicle vehicle, boolean available);
+
+    List<Vehicle> getAllVehicles();
+    
 }

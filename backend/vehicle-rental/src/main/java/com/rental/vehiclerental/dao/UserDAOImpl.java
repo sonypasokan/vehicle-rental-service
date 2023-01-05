@@ -1,10 +1,11 @@
 package com.rental.vehiclerental.dao;
 
 import com.rental.vehiclerental.entity.User;
+import com.rental.vehiclerental.exception.UserNotAdminException;
+import com.rental.vehiclerental.exception.UserNotExistException;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -16,8 +17,7 @@ public class UserDAOImpl implements UserDAO{
     @Autowired
     private EntityManager entityManager;
 
-    @Override
-    public User getUser(int userId) {
+    private User getUser(int userId) {
         Session currentSession = entityManager.unwrap(Session.class);
 
         try {
@@ -69,6 +69,22 @@ public class UserDAOImpl implements UserDAO{
     public User setAdmin(User user) {
         user.setAdmin(true);
         entityManager.persist(user);
+        return user;
+    }
+
+    @Override
+    public User verifyUser(int userId) throws UserNotExistException {
+        User user = getUser(userId);
+        if (user == null)
+            throw new UserNotExistException("User with id " + userId + " doesn't exist");
+        return user;
+    }
+
+    @Override
+    public User verifyAdminUser(int userId) throws UserNotExistException, UserNotAdminException {
+        User user = verifyUser(userId);
+        if (!user.isAdmin())
+            throw new UserNotAdminException("User does not have admin privilege");
         return user;
     }
 }

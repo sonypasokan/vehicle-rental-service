@@ -70,35 +70,16 @@ public class AccessService implements AccessEnabler {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public User createProfile(int userId, String name, String email) throws UserNotExistException {
-        User user = userDAO.getUser(userId);
-        if (user == null)
-            throw new UserNotExistException("User with id " + userId + " doesn't exist");
+        User user = userDAO.verifyUser(userId);
         return userDAO.update(user, name, email);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public User setAdmin(int userId) throws UserNotExistException {
-        User user = userDAO.getUser(userId);
-        if (user == null)
-            throw new UserNotExistException("User with id " + userId + " doesn't exist");
+        User user = userDAO.verifyUser(userId);
         user = userDAO.setAdmin(user);
         return user;
     }
 
-    @Override
-    public User verifyUser(int userId) throws UserNotExistException {
-        User user = userDAO.getUser(userId);
-        if (user == null)
-            throw new UserNotExistException("User with id " + userId + " doesn't exist");
-        return user;
-    }
-
-    @Override
-    public User verifyAdminUser(int userId) throws UserNotExistException, UserNotAdminException {
-        User user = verifyUser(userId);
-        if (!user.isAdmin())
-            throw new UserNotAdminException("User does not have admin privilege");
-        return user;
-    }
 }

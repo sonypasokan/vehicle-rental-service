@@ -11,9 +11,10 @@ public interface BookingDAO {
 
     Booking create(User user, Vehicle vehicle);
 
-    List<Booking> getBookingByUser(int userId);
+    List<Booking> getBookingByUser(User user);
 
     Booking getBookingById(int bookingId);
 
     Booking returnVehicle(Booking booking, Station station);
+
 }

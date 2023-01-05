@@ -20,12 +20,12 @@ public class Vehicle {
     private boolean isAvailable;
 
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User creator;
 
     private LocalDateTime createdTime;
 
     @JoinColumn(name = "station_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Station station;
 }

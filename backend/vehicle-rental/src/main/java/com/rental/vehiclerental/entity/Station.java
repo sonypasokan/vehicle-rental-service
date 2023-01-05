@@ -23,7 +23,7 @@ public class Station {
     private LocalDateTime creationTime;
 
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User creator;
 
 }

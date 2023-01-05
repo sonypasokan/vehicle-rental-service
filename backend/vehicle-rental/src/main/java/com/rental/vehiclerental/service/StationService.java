@@ -21,16 +21,13 @@ public class StationService implements StationManager {
     private UserDAO userDAO;
 
     @Autowired
-    private AccessEnabler accessEnabler;
-
-    @Autowired
     private StationDAO stationDAO;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Station add(int userId, String stationName, String location)
             throws UserNotExistException, UserNotAdminException, MalformedURLException {
-        User user = accessEnabler.verifyAdminUser(userId);
+        User user = userDAO.verifyAdminUser(userId);
         URL url = null;
         if (!location.equals(""))
             url = new URL(location);

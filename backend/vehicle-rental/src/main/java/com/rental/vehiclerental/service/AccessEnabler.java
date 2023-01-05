@@ -16,7 +16,4 @@ public interface AccessEnabler {
 
     User setAdmin(int userId) throws UserNotExistException;
 
-    User verifyUser(int userId) throws UserNotExistException;
-
-    User verifyAdminUser(int userId) throws UserNotExistException, UserNotAdminException;
 }

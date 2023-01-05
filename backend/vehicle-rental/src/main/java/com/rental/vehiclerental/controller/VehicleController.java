@@ -2,10 +2,8 @@ package com.rental.vehiclerental.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.rental.vehiclerental.entity.Station;
 import com.rental.vehiclerental.entity.Vehicle;
 import com.rental.vehiclerental.exception.MandatoryFieldMissingException;
-import com.rental.vehiclerental.service.StationManager;
 import com.rental.vehiclerental.service.VehicleManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -85,17 +83,80 @@ public class VehicleController {
         return new ResponseEntity<>(jsonObject, status);
     }
 
-    @ApiOperation(value = "Get vehicles at station", response = ResponseEntity.class)
-    @GetMapping("/view/{stationId}")
-    public ResponseEntity<Object> viewByStation(@PathVariable int stationId) {
+    @ApiOperation(value = "Get all vehicles at station", response = ResponseEntity.class)
+    @GetMapping("/view/all/{stationId}")
+    public ResponseEntity<Object> viewAllAtStation(@PathVariable int stationId) {
         ObjectNode jsonObject = objectMapper.createObjectNode();
         HttpStatus status;
 
         try {
-            List<Vehicle> vehicleList = vehicleManager.viewByStationId(stationId);
+            List<Vehicle> vehicleList = vehicleManager.viewAllByStationId(stationId);
             jsonObject.putPOJO("values", vehicleList);
             jsonObject.put("success", true);
             jsonObject.put("message", "Vehicle listed successfully");
+            status = HttpStatus.OK;
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("success", false);
+            jsonObject.put("message", "Unable to process your request - " + e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(jsonObject, status);
+    }
+
+    @ApiOperation(value = "Get available vehicles at station", response = ResponseEntity.class)
+    @GetMapping("/view/available/{stationId}")
+    public ResponseEntity<Object> viewAvailableAtStation(@PathVariable int stationId) {
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        HttpStatus status;
+
+        try {
+            List<Vehicle> vehicleList = vehicleManager.viewAvailableByStationId(stationId);
+            jsonObject.putPOJO("values", vehicleList);
+            jsonObject.put("success", true);
+            jsonObject.put("message", "Vehicle listed successfully");
+            status = HttpStatus.OK;
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("success", false);
+            jsonObject.put("message", "Unable to process your request - " + e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(jsonObject, status);
+    }
+
+    @ApiOperation(value = "Make the vehicle unavailable", response = ResponseEntity.class)
+    @PostMapping("/disable/{userId}/{regId}")
+    public ResponseEntity<Object> disable(@PathVariable int userId, @PathVariable String regId) {
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        HttpStatus status;
+
+        try {
+            Vehicle vehicle = vehicleManager.disable(userId, regId);
+            jsonObject.putPOJO("values", vehicle);
+            jsonObject.put("success", true);
+            jsonObject.put("message", "Vehicle " + regId + " is no more available");
+            status = HttpStatus.OK;
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("success", false);
+            jsonObject.put("message", "Unable to process your request - " + e.getMessage());
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(jsonObject, status);
+    }
+
+    @ApiOperation(value = "View All Vehicles", response = ResponseEntity.class)
+    @GetMapping("/view")
+    public ResponseEntity<Object> view() {
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        HttpStatus status;
+
+        try {
+            List<Vehicle> vehicleList = vehicleManager.viewAll();
+            jsonObject.putPOJO("values", vehicleList);
+            jsonObject.put("success", true);
+            jsonObject.put("message", "Vehicles listed successfully");
             status = HttpStatus.OK;
         } catch (Exception e) {
             e.printStackTrace();

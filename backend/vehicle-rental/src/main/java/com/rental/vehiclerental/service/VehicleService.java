@@ -1,15 +1,13 @@
 package com.rental.vehiclerental.service;
 
+import com.rental.vehiclerental.dao.BookingDAO;
 import com.rental.vehiclerental.dao.StationDAO;
 import com.rental.vehiclerental.dao.UserDAO;
 import com.rental.vehiclerental.dao.VehicleDAO;
 import com.rental.vehiclerental.entity.Station;
 import com.rental.vehiclerental.entity.User;
 import com.rental.vehiclerental.entity.Vehicle;
-import com.rental.vehiclerental.exception.StationNotExistException;
-import com.rental.vehiclerental.exception.UserNotAdminException;
-import com.rental.vehiclerental.exception.UserNotExistException;
-import com.rental.vehiclerental.exception.VehicleNotExistException;
+import com.rental.vehiclerental.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +22,6 @@ public class VehicleService implements VehicleManager {
     private UserDAO userDAO;
 
     @Autowired
-    private AccessEnabler accessEnabler;
-
-    @Autowired
     private VehicleDAO vehicleDAO;
 
     @Autowired
@@ -35,8 +30,8 @@ public class VehicleService implements VehicleManager {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Vehicle add(int userId, String regId, String type, String model, double price)
-            throws UserNotExistException, UserNotAdminException, VehicleNotExistException, StationNotExistException {
-        User user = accessEnabler.verifyAdminUser(userId);
+            throws UserNotExistException, UserNotAdminException, VehicleNotExistException {
+        User user = userDAO.verifyAdminUser(userId);
         Vehicle vehicle = vehicleDAO.getVehicleByRegId(regId);
         if (vehicle != null)
             throw new VehicleNotExistException("Vehicle already exists with this regId " + regId);
@@ -47,8 +42,10 @@ public class VehicleService implements VehicleManager {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void move(int userId, String regId, int stationId) throws UserNotExistException, UserNotAdminException, VehicleNotExistException, StationNotExistException {
-        User user = accessEnabler.verifyAdminUser(userId);
+    public void move(int userId, String regId, int stationId)
+            throws UserNotExistException, UserNotAdminException,
+            VehicleNotExistException, StationNotExistException {
+        User user = userDAO.verifyAdminUser(userId);
         Vehicle vehicle = vehicleDAO.getVehicleByRegId(regId);
         if (vehicle == null)
             throw new VehicleNotExistException("Vehicle not found with id " + regId);
@@ -60,10 +57,38 @@ public class VehicleService implements VehicleManager {
     }
 
     @Override
-    public List<Vehicle> viewByStationId(int stationId) throws StationNotExistException {
+    public List<Vehicle> viewAllByStationId(int stationId) throws StationNotExistException {
         Station station = stationDAO.getStation(stationId);
         if (station == null)
             throw new StationNotExistException("Station " + stationId + " does not exist");
-        return vehicleDAO.getAvailableVehiclesByStation(station);
+        return vehicleDAO.getVehiclesByStationAndAvailability(station, false);
+    }
+
+    @Override
+    public List<Vehicle> viewAvailableByStationId(int stationId) throws StationNotExistException {
+        Station station = stationDAO.getStation(stationId);
+        if (station == null)
+            throw new StationNotExistException("Station " + stationId + " does not exist");
+        return vehicleDAO.getVehiclesByStationAndAvailability(station, true);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Vehicle disable(int userId, String regId)
+            throws UserNotExistException, UserNotAdminException,
+            VehicleNotExistException {
+        User user = userDAO.verifyAdminUser(userId);
+        Vehicle vehicle = vehicleDAO.getVehicleByRegId(regId);
+        if (vehicle == null)
+            throw new VehicleNotExistException("Vehicle not found with id " + regId);
+        if (!vehicle.isAvailable())
+            throw new VehicleNotExistException("Vehicle is not available - (either already disabled or in use)");
+        vehicleDAO.makeAvailable(vehicle, false);
+        return vehicle;
+    }
+
+    @Override
+    public List<Vehicle> viewAll() {
+        return vehicleDAO.getAllVehicles();
     }
 }

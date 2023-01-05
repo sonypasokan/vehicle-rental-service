@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,32 +27,36 @@ public class BookingDAOImpl implements BookingDAO{
         booking.setVehicle(vehicle);
         booking.setFromTime(LocalDateTime.now());
         booking.setFromStation(vehicle.getStation());
+        booking.setReturned(false);
         entityManager.persist(booking);
         return booking;
     }
 
     @Override
-    public List<Booking> getBookingByUser(int userId) {
+    public List<Booking> getBookingByUser(User user) {
         Session currentSession = entityManager.unwrap(Session.class);
 
         TypedQuery<Booking> query = currentSession.createQuery(
-                "select a from Booking a where a.user.id=:userId",
+                "select a from Booking a where a.user=:user",
                 Booking.class
         );
-        query.setParameter("userId", userId);
+        query.setParameter("user", user);
         return query.getResultList();
     }
 
     @Override
     public Booking getBookingById(int bookingId) {
         Session currentSession = entityManager.unwrap(Session.class);
-
-        TypedQuery<Booking> query = currentSession.createQuery(
-                "select a from Booking a where a.id=:bookingId",
-                Booking.class
-        );
-        query.setParameter("bookingId", bookingId);
-        return query.getSingleResult();
+        try {
+            TypedQuery<Booking> query = currentSession.createQuery(
+                    "select a from Booking a where a.id=:bookingId",
+                    Booking.class
+            );
+            query.setParameter("bookingId", bookingId);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
@@ -62,4 +67,5 @@ public class BookingDAOImpl implements BookingDAO{
         entityManager.persist(booking);
         return booking;
     }
+
 }

@@ -68,11 +68,15 @@ public class VehicleDAOImpl implements VehicleDAO{
     }
 
     @Override
-    public List<Vehicle> getAvailableVehiclesByStation(Station station) {
+    public List<Vehicle> getVehiclesByStationAndAvailability(Station station, boolean availableOnly) {
         Session currentSession = entityManager.unwrap(Session.class);
 
+        StringBuilder queryString = new StringBuilder();
+        queryString.append("select a from Vehicle a where a.station=:station ");
+        if (availableOnly)
+            queryString.append("and isAvailable=true");
         TypedQuery<Vehicle> query = currentSession.createQuery(
-                "select a.vehicle from VehicleStation a where a.station=:station ",
+                queryString.toString(),
                 Vehicle.class
         );
         query.setParameter("station", station);
@@ -89,6 +93,17 @@ public class VehicleDAOImpl implements VehicleDAO{
     public void makeAvailable(Vehicle vehicle, boolean available) {
         vehicle.setAvailable(available);
         entityManager.persist(vehicle);
+    }
+
+    @Override
+    public List<Vehicle> getAllVehicles() {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        TypedQuery<Vehicle> query = currentSession.createQuery(
+                "select a from Vehicle a",
+                Vehicle.class
+        );
+        return query.getResultList();
     }
 
 }
