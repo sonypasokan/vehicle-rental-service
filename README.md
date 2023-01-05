@@ -40,11 +40,9 @@ Twilio API is used as SMS service for sending OTP to users
 2. TWILIO_AUTH_TOKEN - Twilio Auth Token
 3. TWILIO_PHONE_NO - Twilio phone number from which the OTP will be sent
 
-## Technical Documentation
-API documentation is available at swagger end point.
-Code documentation is available as doc strings in the Java classes.
 
 ## Future Improvement
 1. APIs can be added for features such as editing/renaming/deleting the vehicles/stations.
 2. Application can be decoupled by using messaging services like Kafka to send OTP
 3. Pagination for APIs with larger results.
+4. Features can be extended further.
