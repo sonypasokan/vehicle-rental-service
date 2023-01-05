@@ -25,6 +25,7 @@ Features that are allowed only for admin are:
 - Add station
 - Disable vehicle
 - Move a vehicle to a station
+- Update price of the vehicle
 
 ## Technical Requirements
 
