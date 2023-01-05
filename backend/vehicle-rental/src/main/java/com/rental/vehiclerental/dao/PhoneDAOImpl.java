@@ -1,22 +1,28 @@
 package com.rental.vehiclerental.dao;
 
 import com.rental.vehiclerental.entity.PhoneOTP;
-import com.rental.vehiclerental.entity.User;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
 
+/**
+ * DB operations on PhoneOTP entity.
+ */
 @Repository
 public class PhoneDAOImpl implements PhoneDAO {
 
     @Autowired
     private EntityManager entityManager;
 
+    /**
+     * Get the latest OTP sent to the phone.
+     * @param phone - phone no
+     * @return PhoneOTP which is sent latest
+     */
     @Override
     public PhoneOTP getLatestOtpByPhone(String phone) {
         Session currentSession = entityManager.unwrap(Session.class);
@@ -31,6 +37,12 @@ public class PhoneDAOImpl implements PhoneDAO {
         return query.getSingleResult();
     }
 
+    /**
+     * Save the newly sent phone OTP in DB.
+     * @param phone - to which OTP was sent
+     * @param otp - OTP which was sent
+     * @param minutesToLive - TTL using which the expiry time can be calculated
+     */
     @Override
     public void save(String phone, String otp, int minutesToLive) {
         PhoneOTP phoneOTP = new PhoneOTP();

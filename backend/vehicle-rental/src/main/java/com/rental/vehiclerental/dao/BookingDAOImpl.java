@@ -12,14 +12,24 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+/**
+ * DB operations on Booking entity
+ */
 @Repository
 public class BookingDAOImpl implements BookingDAO{
 
     @Autowired
     private EntityManager entityManager;
 
+    /**
+     * Make a new booking
+     * @param user - user making the booking
+     * @param vehicle - vehicle being booked
+     * @return Booking made by the user
+     */
     @Override
     public Booking create(User user, Vehicle vehicle) {
         Booking booking = new Booking();
@@ -32,6 +42,11 @@ public class BookingDAOImpl implements BookingDAO{
         return booking;
     }
 
+    /**
+     * Filter bookings made by the given user
+     * @param user - whose booking is being filtered
+     * @return List of bookings made by the user
+     */
     @Override
     public List<Booking> getBookingByUser(User user) {
         Session currentSession = entityManager.unwrap(Session.class);
@@ -44,6 +59,11 @@ public class BookingDAOImpl implements BookingDAO{
         return query.getResultList();
     }
 
+    /**
+     * Select the booking for the given bookingId
+     * @param bookingId - id of booking
+     * @return Matching booking
+     */
     @Override
     public Booking getBookingById(int bookingId) {
         Session currentSession = entityManager.unwrap(Session.class);
@@ -59,13 +79,32 @@ public class BookingDAOImpl implements BookingDAO{
         }
     }
 
+    /**
+     * Return the vehicle and move the station where user left the vehicle off.
+     * @param booking - booking that needs to be marked as stopped/returned
+     * @param station - station where the vehicle is returned
+     * @return Booking marked as returned
+     */
     @Override
     public Booking returnVehicle(Booking booking, Station station) {
-        booking.setToTime(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        booking.setToTime(now);
         booking.setToStation(station);
         booking.setReturned(true);
+        booking.setTotalAmount(calculatePrice(booking, now));
         entityManager.persist(booking);
         return booking;
+    }
+
+    /**
+     * Calculate the amount for the ride
+     * @param booking Booking for which amount is calculated
+     * @param toTime Time at which booking ended
+     * @return Total amount for the ride
+     */
+    private double calculatePrice(Booking booking, LocalDateTime toTime) {
+        long hours = ChronoUnit.HOURS.between(toTime, booking.getFromTime());
+        return hours * booking.getVehicle().getPricePerHour();
     }
 
 }

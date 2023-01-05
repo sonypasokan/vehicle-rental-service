@@ -18,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service handling all Booking related operations
+ */
 @Service
 public class BookingService implements Bookable {
 
@@ -33,6 +36,14 @@ public class BookingService implements Bookable {
     @Autowired
     private StationDAO stationDAO;
 
+    /**
+     * Make a booking
+     * @param userId User making the booking
+     * @param regId Registration id of the vehicle
+     * @return Booking object if booking is successful
+     * @throws UserNotExistException when the given user id does not exist
+     * @throws VehicleNotExistException when the vehicl does not exist
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Booking book(int userId, String regId) throws UserNotExistException, VehicleNotExistException {
@@ -50,6 +61,12 @@ public class BookingService implements Bookable {
         return bookingDAO.create(user, vehicle);
     }
 
+    /**
+     * View all bookings made by the user
+     * @param userId User's id
+     * @return List of all bookings made by the user
+     * @throws UserNotExistException when the given user does not exist
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Booking> view(int userId) throws UserNotExistException {
@@ -57,6 +74,14 @@ public class BookingService implements Bookable {
         return bookingDAO.getBookingByUser(user);
     }
 
+    /**
+     * End the booking and return the vehicle
+     * @param bookingId Booking id
+     * @param stationId Station from where the booking was done
+     * @return Booking object after ending the booking
+     * @throws BookingNotExistException when the booking does not exist
+     * @throws StationNotExistException when the station does not exist
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Booking returnVehicle(int bookingId, int stationId) throws BookingNotExistException, StationNotExistException {

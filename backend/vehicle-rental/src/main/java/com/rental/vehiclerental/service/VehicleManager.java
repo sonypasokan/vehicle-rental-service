@@ -25,4 +25,8 @@ public interface VehicleManager {
             VehicleNotExistException, BookingNotExistException;
 
     List<Vehicle> viewAll();
+
+    Vehicle updatePrice(int userId, String regId, double price)
+            throws UserNotExistException, UserNotAdminException, VehicleNotExistException;
+
 }

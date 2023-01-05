@@ -14,12 +14,21 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
+/**
+ * Configuration for the project.
+ */
 @Configuration
 @EnableSwagger2WebMvc
+@EnableSwagger2WebFlux
 public class VehicleRentalConfig implements WebMvcConfigurer {
 
+    /**
+     * Specify the filtering for the API end points
+     * @return FilterRegistrationBean
+     */
     @Bean
     public FilterRegistrationBean corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -37,6 +46,10 @@ public class VehicleRentalConfig implements WebMvcConfigurer {
         return bean;
     }
 
+    /**
+     * Method to enable Swagger API documentation
+     * @return Docket
+     */
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -47,6 +60,10 @@ public class VehicleRentalConfig implements WebMvcConfigurer {
                 .apiInfo(apiEndPointsInfo());
     }
 
+    /**
+     * Method to provide the details of the APIs built.
+     * @return APIInfo
+     */
     private ApiInfo apiEndPointsInfo() {
         return new ApiInfoBuilder().title("VEHICLE RENTAL - REST API")
                 .description("Vehicle Rental Service")

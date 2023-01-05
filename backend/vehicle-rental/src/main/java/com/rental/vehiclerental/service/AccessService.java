@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.SplittableRandom;
 
+/**
+ * Service handling all user access queries
+ */
 @Service
 public class AccessService implements AccessEnabler {
 
@@ -23,6 +26,12 @@ public class AccessService implements AccessEnabler {
     @Autowired
     private UserDAO userDAO;
 
+    /**
+     * Send OTP when user wants to login to the application
+     * @param phone user's phone number
+     * @throws EnvironmentVariableMissingException when expected environment
+     * variables are not set in the system
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void sendOtp(String phone) throws EnvironmentVariableMissingException {
@@ -35,12 +44,24 @@ public class AccessService implements AccessEnabler {
         phoneDAO.save(phone, otp, OTPStrings.TTL_IN_MINUTES);
     }
 
+    /**
+     * Private method which internally calls Twilio services to send OTP to user's phone
+     * @param phone user's phone
+     * @param otp OTP to be sent to user
+     * @throws EnvironmentVariableMissingException when expected environment
+     * variables are not set in the system
+     */
     private void sendOtp(String phone, String otp) throws EnvironmentVariableMissingException {
         String message = String.format(OTPStrings.OTP_MESSAGE, otp);
         String sid = new SMSService().send(message, phone);
         System.out.println("Message id: " + sid);
     }
 
+    /**
+     * Generate OTP which has to be shared with user
+     * @param lengthOfOTP Length of the OTP
+     * @return OTP which is generated of given length
+     */
     private String generateOTP(int lengthOfOTP) {
         StringBuilder generatedOTP = new StringBuilder();
         SplittableRandom splittableRandom = new SplittableRandom();
@@ -52,6 +73,15 @@ public class AccessService implements AccessEnabler {
         return generatedOTP.toString();
     }
 
+    /**
+     * Validate the OTP which user entered against the one sent from the application
+     * @param phone phone to which OTP was sent
+     * @param inputOtp OTP input by the user
+     * @return Pair of User object and a flag
+     * User object will be present only if the validation was successful
+     * Flag is to inform whether the user logged in for the first time or not
+     * @throws IncorrectOTPException when the OTP entered does not match with what's sent to user
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Pair<User, Boolean> validateOtp(String phone, String inputOtp) throws IncorrectOTPException {
@@ -67,6 +97,14 @@ public class AccessService implements AccessEnabler {
         return Pair.of(user, false);
     }
 
+    /**
+     * Create user's profile
+     * @param userId user's id
+     * @param name Name of the user
+     * @param email Email id
+     * @return User object which is created
+     * @throws UserNotExistException when the given user id does not exist
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public User createProfile(int userId, String name, String email) throws UserNotExistException {
@@ -74,6 +112,12 @@ public class AccessService implements AccessEnabler {
         return userDAO.update(user, name, email);
     }
 
+    /**
+     * Make the given user an admin
+     * @param userId User who has to be promoted as admin
+     * @return User who is upgraded as admin
+     * @throws UserNotExistException when the given user id does not exist
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public User setAdmin(int userId) throws UserNotExistException {

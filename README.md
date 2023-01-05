@@ -47,3 +47,4 @@ Code documentation is available as doc strings in the Java classes.
 ## Future Improvement
 1. APIs can be added for features such as editing/renaming/deleting the vehicles/stations.
 2. Application can be decoupled by using messaging services like Kafka to send OTP
+3. Pagination for APIs with larger results.

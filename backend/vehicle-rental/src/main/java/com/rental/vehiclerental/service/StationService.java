@@ -14,6 +14,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+/**
+ * Service handling station related operations
+ */
 @Service
 public class StationService implements StationManager {
 
@@ -23,6 +26,16 @@ public class StationService implements StationManager {
     @Autowired
     private StationDAO stationDAO;
 
+    /**
+     * Add the station
+     * @param userId User's id
+     * @param stationName Name of station
+     * @param location Map location of the station
+     * @return Station which is added
+     * @throws UserNotExistException when the user does not exist
+     * @throws UserNotAdminException when the user is not an admin
+     * @throws MalformedURLException when the location URL is found incorrect
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Station add(int userId, String stationName, String location)
@@ -34,6 +47,10 @@ public class StationService implements StationManager {
         return stationDAO.add(user, stationName, url);
     }
 
+    /**
+     * Get all stations in the DB
+     * @return List of all stations
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Station> getAllStations() {

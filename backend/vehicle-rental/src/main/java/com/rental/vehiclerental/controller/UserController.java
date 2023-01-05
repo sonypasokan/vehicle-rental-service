@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Manages all user/admin operations
+ */
 @RestController
 @RequestMapping("/api/user")
 @Api(value = "User controller")
@@ -30,6 +33,20 @@ public class UserController {
     @Autowired
     private AccessEnabler accessEnabler;
 
+    /**
+     * POST API to send OTP to the user.
+     * When a user/admin tries to use the app, they have to authenticate through their phone.
+     * Once the phone number is given, an OTP will be sent to the user using Twilio SMS service.
+     * @param payload must contain
+     *                phone - with pin code in String format
+     * @return Response contains
+     * boolean success - true/false saying whether the API executed successfully
+     * String message - Detailed response
+     *
+     * Response status:
+     * 200 - when success
+     * 400 - when failure
+     */
     @ApiOperation(value = "Send OTP", response = ResponseEntity.class)
     @PostMapping("/send-otp")
     public ResponseEntity<Object> sendOtp(@RequestBody Map<String, Object> payload) {
@@ -52,6 +69,22 @@ public class UserController {
         return new ResponseEntity<>(jsonObject, status);
     }
 
+    /**
+     * POST API to login to the app using phone & OTP received
+     * A new account will be created if it's first time.
+     * Otherwise existing account will be loaded.
+     * @param payload must contain
+     *                phone - with pin code as String
+     *                OTP - received through SMS
+     * @return Response contains
+     * boolean success - true/false saying whether the API executed successfully
+     * String message - Detailed response
+     * Map values - containing the details of the user and a flag saying whether it's a new user or not.
+     *
+     * Response status:
+     * 200 - when success
+     * 400 - when failure
+     */
     @ApiOperation(value = "Login using phone & OTP", response = ResponseEntity.class)
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody Map<String, Object> payload) {
@@ -80,6 +113,21 @@ public class UserController {
         return new ResponseEntity<>(jsonObject, status);
     }
 
+    /**
+     * POST API to signup the user by creating/updating profile
+     * @param payload must contain
+     *                userId - in integer
+     *                name - String
+     *                email - String
+     * @return Response contains
+     * boolean success - true/false saying whether the API executed successfully
+     * String message - Detailed response
+     * Map values - containing the details of the account created
+     *
+     * Response status:
+     * 200 - when success
+     * 400 - when failure
+     */
     @ApiOperation(value = "Profile creation", response = ResponseEntity.class)
     @PostMapping("/signup")
     public ResponseEntity<Object> signup(@RequestBody Map<String, Object> payload) {
@@ -106,6 +154,19 @@ public class UserController {
         return new ResponseEntity<>(jsonObject, status);
     }
 
+    /**
+     * POST API to make the given user as admin
+     * @param payload must contain -
+     *                userId - in integer
+     * @return Response contains
+     * boolean success - true/false saying whether the API executed successfully
+     * String message - Detailed response
+     * Map values - containing the details of the user
+     *
+     * Response status:
+     * 200 - when success
+     * 400 - when failure
+     */
     @ApiOperation(value = "Mark existing user as admin", response = ResponseEntity.class)
     @PostMapping("/admin/add")
     public ResponseEntity<Object> addAdmin(@RequestBody Map<String, Object> payload) {
